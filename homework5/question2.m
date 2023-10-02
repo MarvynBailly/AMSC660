@@ -1,10 +1,11 @@
 function question2()
     At = rand(10);  %generate random guy
 
-    A = At + At';    %compute symmetric matrix
-    %A = At'*At;      %compute SPD matrix
+    A = At + At';    %compute symmetric matrix - Part b
+    %A = At'*At;      %compute SPD matrix - Part c
 
     L = cholesky(A);
+    %If L is SPD go ahead and calculate part (b)
     if(length(L) > 1)
         fprintf("The matrix is postive definte\n")
         mineval = min(eig(A));  %get smallest eigevalue
