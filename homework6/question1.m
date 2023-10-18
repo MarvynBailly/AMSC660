@@ -13,20 +13,23 @@ function question1()
 
     % part a - 
     fprintf('My row after Low-Rank factorization:\n')
-    % for i = 1:length(lambdas)
-    %     for j = 1:length(ks)
-    %         [X,Y] = lowRankFact(dataMatrix,lambdas(i),ks(j),nanLocations);
-    %         A = X*Y;
-    %         fprintf('lambda = %d and k = %d:[%s]\n',lambdas(i),ks(j),join(string(round(abs(A(79,1:10)),5)), ','));
-    %         %fprintf('lambda = %d and k = %d:[%s]\n',lambdas(i),ks(j),join(string(round(abs(A(79,1:10) - dataMatrix(79,1:10)),1)), ','));
-    %     end
-    % end
+    for i = 1:length(lambdas)
+        for j = 1:length(ks)
+            [X,Y] = lowRankFact(dataMatrix,lambdas(i),ks(j),nanLocations);
+            A = X*Y;
+            fprintf('lambda = %d and k = %d:[%s]\n',lambdas(i),ks(j),join(string(A(79,:)), ','));
+            fprintf('lambda = %d and k = %d:[%s]\n',lambdas(i),ks(j),join(string(A(79,:) - dataMatrix(79,1:10)), ','));
+            %fprintf('lambda = %d and k = %d:[%s]\n',lambdas(i),ks(j),join(string(round(abs(A(79,1:10)),5)), ','));
+            %fprintf('lambda = %d and k = %d:[%s]\n',lambdas(i),ks(j),join(string(round(abs(A(79,1:10) - dataMatrix(79,1:10)),1)), ','));
+        end
+    end
     % part b -
-    % for i = 1:length(lambdas)
-    %     A = nuclear(dataMatrix,lambdas(i),nanLocations);
-    %     fprintf('lambda = %d:[%s]\n',lambdas(i),join(string(round(abs(A(79,1:10)),1)), ','));
-    % end
+    for i = 1:length(lambdas)
+        A = nuclear(dataMatrix,lambdas(i),nanLocations);
+        fprintf('lambda = %d:[%s]\n',lambdas(i),join(string(round(abs(A(79,1:10)),1)), ','));
+    end
 
+    % test times
     tic
     [X,Y] = lowRankFact(dataMatrix,lambdas(1),ks(1),nanLocations);
     toc
@@ -43,8 +46,8 @@ function [X,Yt] = lowRankFact(A, lambda,k,nanLocations)
     [n,d] = size(A);
 
     % define X and Y^T
-    X = ones(n,k);
-    Yt = ones(k,d);
+    X = rand(n,k);
+    Yt = rand(k,d);
 
     for m = 1:1000
         for i = 1:n
