@@ -74,12 +74,9 @@ function [w,f,gnorm,k] = LevenbergMarquardt(r_and_J,w,kmax,tol)
             g = gnew;
             r = rnew; 
             B = Jnew'*Jnew + (1e-6)*I;
-            %fprintf("Accepted: iter # %d: f = %.10f, |df| = %.4e,rho = %.4e, Delta = %.4e\n",k,f,norm_g,rho,Delta);
-            %fprintf('Accept: iter # %d: f = %.10f, |df| = %.4e, rho = %.4e, Delta = %.4e, j_sub = %d\n',iter,r,norm_g,rho,Delta,j_sub);
+            fprintf("Accepted: iter # %d: f = %.10f, |df| = %.4e,rho = %.4e, Delta = %.4e\n",k,f,norm_g,rho,Delta);
         else
-            %fprintf("Rejected: iter # %d",iter);
-            %fprintf("Accepted: iter # %d: f = %.10f, |df| = %.4e,rho = %.4e, Delta = %.4e\n",k,f,norm_g,rho,Delta);
-            %fprintf('Reject: iter # %d: f = %.10f, |df| = %.4e, rho = %.4e, Delta = %.4e, j_sub = %d\n',iter,r,norm_g,rho,Delta,j_sub);
+            fprintf("Accepted: iter # %d: f = %.10f, |df| = %.4e,rho = %.4e, Delta = %.4e\n",k,f,norm_g,rho,Delta);
         end
         f(k+1) = 1/2 * norm(r)^2;
         gnorm(k+1) = norm(g);
