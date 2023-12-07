@@ -1,6 +1,5 @@
 function question2()
     ds = [5, 10, 15, 20];
-    %ds=[3];
     
     for i = 1:length(ds)
         fprintf("Setting d = %d\n",ds(i))
