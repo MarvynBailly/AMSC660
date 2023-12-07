@@ -8,7 +8,7 @@ function [w, f, gnorm, k] = adams(fun,gfun, w, kmax, tol, bsz,n)
     m = zeros(length(w),1);
     v = zeros(length(w),1);
 
-    for k = 1:kmax  % epochs
+    for k = 1:kmax 
         indices = randperm(n,bsz);
         
         g = gfun(indices, w);
@@ -23,11 +23,10 @@ function [w, f, gnorm, k] = adams(fun,gfun, w, kmax, tol, bsz,n)
         
         w = w -  alpha*mt ./ (sqrt(vt)  + e);
 
-        %fprintf('k = %d, f = %d, gnorm = %d\n',k,f(k),gnorm(k))
+        fprintf('k = %d, f = %d, gnorm = %d\n',k,f(k),gnorm(k))
         % Check for convergence
         if gnorm(k) < tol
             break;
         end
     end
-    fprintf('k = %d, f = %d, gnorm = %d\n',k,f(k),gnorm(k))
 end

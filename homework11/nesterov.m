@@ -22,13 +22,12 @@ function [w, f, gnorm, k] = nesterov(fun,gfun, w, kmax, tol, bsz,n)
         gnorm(k) = norm(g);
 
 
-        %fprintf('k = %d, f = %d, alpha = %d, gnorm = %d\n',k,f(k),alpha, gnorm(k))
+        fprintf('k = %d, f = %d, alpha = %d, gnorm = %d\n',k,f(k),alpha, gnorm(k))
         % Check for convergence
         if gnorm(k) < tol
             return;
         end
     end
-    fprintf('k = %d, f = %d, alpha = %d, gnorm = %d\n',k,f(k),alpha, gnorm(k))
 end
 
 
