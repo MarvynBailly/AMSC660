@@ -1,0 +1,89 @@
+function question3()
+    close all;
+
+    N = 30;    
+    iterMax = 1e8;
+    betas = 0.2:0.01:1;
+    
+    meanMags = zeros(1,length(betas));
+    varMags = zeros(1,length(betas));
+    
+    % I could probably vectorize the betas but let's just use a for loop
+    for i = 1:length(betas)
+        % set up N x N mesh with all spins up
+        spins = ones(N,N);
+        
+        % use MCMC to find running mean and var
+        [meanMag,varMag] = MCMC(spins,betas(i),iterMax);
+        meanMags(i) = meanMag;
+        varMags(i) = varMag;
+    end
+
+    %plot
+    figure(1)
+    grid on;
+
+
+    plot(betas,meanMags,'ro', 'LineWidth', 1.5, 'MarkerSize', 4, 'MarkerFaceColor', 'r');
+    hold on;
+    
+    plot(betas,varMags);
+
+    plotTrueMu();
+
+    ylim([-0.5 1]);
+    set(gca,'Fontsize',20);
+    xlabel('beta','Fontsize',20);
+    ylabel('Mean Magntization','Fontsize',20);
+end
+
+function plotTrueMu()
+    betas =  linspace(0, 1, 1000);
+    T_c = 0.4408;
+    mu = zeros(size(betas));
+    for i = 1:length(betas)
+        if betas(i) > T_c
+            mu(i) = (1 - sinh(2 * betas(i))^(-4)).^(1/8);
+        else
+            mu(i) = 0; 
+        end
+    end
+    
+    figure(1); 
+    plot(betas, mu, 'b-', 'LineWidth', 2);
+end
+
+function [mu,var] = MCMC(spins,beta,iterMax)
+    N = length(spins);
+    % compute magnetization
+    m = sum(spins,'all')/N^2;
+    mu = m;
+    var = 0;
+
+    for iter = 1:iterMax
+        % randomly pick a site, flip, and compute difference
+        k = randi(N);
+        l = randi(N);
+        
+        % compute delta H
+        Dh = 2*spins(k,l)*(spins(mod(k-2, N) + 1, l) + spins(mod(k, N) + 1, l) + spins(k, mod(l-2, N) + 1) + spins(k, mod(l, N) + 1));
+        
+        % if we accept this one, update the spins
+        if Dh < 0 || rand < exp(-beta*Dh)
+            spins(k,l) = -spins(k,l);
+            % update the magnetization
+            m = sum(spins,'all')/N^2;
+        end
+    
+
+        % update the running mean
+        mu = (iter*mu+m)/(iter+1);
+            
+        % update the running variance
+        var = ((iter - 1) * var + (m - mu)^2) / iter;
+    end
+end
+
+
+
+
