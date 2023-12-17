@@ -27,7 +27,7 @@ function question1()
     samples = acceptReject(c,sigmaOpt,f,g);
 
     % Part d
-    expectation = monteCarloInt(samples); %abs(samples).*f(abs(samples))
+    expectation = monteCarloInt(samples); 
     fprintf('E[|x|] = %f\n', expectation);
 
     % save figures 
@@ -43,11 +43,9 @@ function eta = acceptReject(c,sigma,f,g)
     N = 1e8; % the number of samples
     v = randn(N,1);
     xi = sigma*v;
-    %xi = normrnd(0,sigma^2,[N,1]);
     u = rand(N,1);
 
     % compute f(xi)/(c g(xi))
-    %ind = find(u <= g(xi));
     ind = find(u <= f(xi) ./ (c * g(xi)));
     Na = length(ind); % the number of accepted RVs
     eta = xi(ind);
