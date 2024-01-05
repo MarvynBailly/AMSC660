@@ -1,0 +1,334 @@
+\documentclass[12pt]{report}
+\usepackage{commands}
+
+\begin{document}
+
+\large
+\begin{center}
+AMSC 660 Homework 2\\
+Due 09/13/23\\
+By Marvyn Bailly\\
+\end{center}
+\normalsize
+\hrule
+
+
+%Good luck my man
+%---------------%
+%---Problem 1---%
+%---------------%
+
+
+
+
+\begin{problem}%[vskip]
+\subsection*{Problem 1}
+
+Consider the polynomial space $\mathcal{P}_n(x),x\in[-1,1]$. Let $T_k, k =0,1,\dots,n,$ be the Chebyshev basis in it. The Chebyshev polynomials are defined via
+\[
+    T_k = \cos(k \arccos(x)).
+\]
+\begin{enumerate}
+    \item [(a)] Use the trigonometric formula
+    \[
+        \cos(a) + \cos(b) = 2 \cos \paren{\frac{a+b}{2}}\cos\paren{\frac{a-b}{2}}
+    \]
+    to derive the three-term recurrence relationship for the Chebyshev polynomials
+    \[
+        T_0(x) = 1, ~~~ T_1(x) = x, ~~~ T_{k+1} = 2x T_k(x) - T_{k-1}(x), ~~ k=1,2,\dots.
+    \]
+
+
+    \item [(b)] Consider the differentiation map
+    \[
+        \dd{}{x}: \mathcal{P}_n \to \mathcal{P}_{n-1}.
+    \]
+    Write the matrix of the differentiation map with respect to the Chebyshev bases in $\mathcal{P}_n \and \mathcal{P}_{n-1}$ for $n = 7$. Hint: you might ﬁnd helpful properties of Chebyshev polynomials presented in Section 3.3.1 of Gil, Segure, Temme, ”Numerical
+    Methods For Special Functions”. Chapter 3 of this book is added to Files/Refs
+    on ELMS.
+
+
+\end{enumerate}
+
+
+\subsection*{Solution}
+\begin{proof}
+
+Consider the polynomial space $\mathcal{P}_n{x},x\in[-1,1]$. Let $T_k, k =0,1,\dots,n,$ be the Chebyshev basis in it. The Chebyshev polynomials are defined via
+\[
+    T_k = \cos(k \theta),
+\]
+where $\theta = \arccos(x)$.
+
+\begin{enumerate}
+    \item [(a)]
+    Applying the trigonometric formula
+    \[
+        \cos(a) + \cos(b) = 2 \cos \paren{\frac{a+b}{2}}\cos\paren{\frac{a-b}{2}},
+    \]
+    gives
+    \begin{align*}
+        T_{k-1}(x) + T_{k+1}(x) &= \cos((k-1)\theta) + \cos((k+1)\theta)\\
+        &= 2 \cos \paren{ \frac{(k-1)\theta + (k+1)\theta}{2}}\cos\paren{\frac{(k-1)\theta - (k+1)\theta}{2}}\\
+        &= 2 \cos (k\theta) \cos(-\theta)\\
+        &= 2 \cos(\theta) \cos(k\theta)\\
+        &= 2 x T_k(x).
+    \end{align*}
+    Then rearranging the terms gives the three-term recurrence relationship to be
+    \[
+        T_{k-1}(x) + T_{k+1} = 2x T_k x \implies T_{k+1} = 2xT_k(x) - T_{k-1}(x)
+    \]
+
+    \item [(b)]
+    Consider the differentiation map
+    \[
+        \dd{}{x}: \mathcal{P}_n \to \mathcal{P}_{n-1}.
+    \]
+    We wish to write the matrix of the differentiation map with respect to the Chebyshev bases in $\mathcal{P}_n \and \mathcal{P}_{n-1}$ for $n = 7$.
+
+    From the given resources we have the following relation for the Chebyshev polynomial derivatives
+    \[
+        \begin{cases}
+            T_0(x) = T_1'(x),\\
+            T_1(x) = \frac{1}{4} T_2'(x),\\
+            T_n(x) = \frac{1}{2}\paren{\frac{T_{n+1}'}{n+1} - \frac{T_{n-1}'}{n-1}}.
+        \end{cases}
+    \]
+    Notice that we can rearrange the terms to find
+    \begin{align*}
+        T_n &= \frac{1}{2}\paren{\frac{T_{n+1}'}{n+1} - \frac{T_{n-1}'}{n-1}}\\
+        2T_n &= \frac{T_{n+1}'}{n+1} - \frac{T_{n-1}'}{n-1}\\
+        \frac{T_{n+1}'}{n+1} &= 2T_n + \frac{T_{n-1}'}{n-1}\\
+        T_{n+1}' &= (n+1)\paren{2T_n + \frac{1}{n-1}T_{n-1}'}\\
+        T_{n+1}' &= 2(n+1)T_n + \frac{n+1}{n-1}T_{n-1}'\\
+        T_{n}' &= 2nT_{n-1} + \frac{n}{n-2}T_{n-2}'.
+    \end{align*}
+    We can use this relation to compute the first seven derivatives
+    \begin{align*}
+        T_0' &= 0,\\
+        T_1' &= T_0,\\
+        T_2' &= 4T_1,\\
+        T_3' &= 6T_2 + 3T_1' = 6T_2 + 3T_0,\\
+        T_4' &= 8T_3 + \frac{4}{2}T_2' = 8T_3 + 8T_1,\\
+        T_5' &= 10T_4 + \frac{5}{3}T_3' = 10T_4 + 10T_2 + 5T_0,\\
+        T_6' &= 12T_5 + \frac{6}{4}T_4' = 12T_5 + 12T_3 + 12T_1,\\
+        T_7' &= 14T_6 + \frac{7}{5}T_5' = 14 T_6 + 14 T_4 + 14 T_2 + 7T_0.
+    \end{align*}
+    Thus the matrix of the differentiation map is given by
+    \[
+        A = \begin{pmatrix}
+            0 & 1 & 0 & 3 & 0 & 5  & 0  & 7\\
+            0 & 0 & 4 & 0 & 8 & 0  & 12 & 0\\
+            0 & 0 & 0 & 6 & 0 & 10 & 0 & 14\\
+            0 & 0 & 0 & 0 & 8 & 0 & 12 & 0\\
+            0 & 0 & 0 & 0 & 0 & 10 & 0 & 14\\
+            0 & 0 & 0 & 0 & 0 & 0 & 12 & 0\\
+            0 & 0 & 0 & 0 & 0 & 0 & 0 & 14\\
+        \end{pmatrix},
+    \]
+    where the columns of $A$ correspond to the Chebyshev bases for $T_i'$ for $0\leq i \leq 7$, i.e. the $A_{00}$ entry corresponds to the $T_0$ element of $T_0'$.
+
+
+\end{enumerate}
+
+\end{proof}
+\end{problem}
+
+
+
+
+%---------------%
+%---Problem 2---%
+%---------------%
+
+
+\begin{problem}%[vskip]
+\subsection*{Problem 2}
+
+Let $A = (a_{ij})$ be an $m \times n$ matrix.
+
+\begin{enumerate}
+    \item [(a)] Prove that the $l_1$-norm of $A$ is
+    \[
+        \| A \|_1 = \max_j \sum_i |a_{ij}|,
+    \]
+    i.e., the maximal column sum of absolute values. Find the maximizing vector.
+    \item [(b)] Prove that the max-norm or $l_\infty$-norm of $A$
+    \[
+        \| A \|_{\max} = \max_i \sum_j |a_{ij}|,
+    \]
+    i.e., the maximal row sum of absolute values. Find the maximizing vector.
+\end{enumerate}
+
+\subsection*{Solution}
+\begin{proof}
+
+Let $A = (a_{ij}) = (a_1 | a_2 | \cdots | a_n)$ be an $m \times n$ matrix. 
+\begin{enumerate}
+    \item [(a)]
+    Let $k$ be the index such that $\max_{j} \| a_j \|_1 = \|a_{k}\|_1$. By definition we have
+    \begin{align*}
+        \|A\|_1 &=  \max_{\|v\|_1 = 1}\| Av \|_1\\
+                &=  \max_{\|v\|_1 = 1}\left\| \sum_{j=1}^n a_{j}v_j \right\|_1\\
+                &\leq \max_{\|v\|_1 = 1}\sum_j^n \|a_j v_j \|_1\\ 
+                &=\max_{\|v\|_1 = 1} \sum_j^n |v_j| \| a_j\|_1\\
+                &\leq \max_{\|v\|_1 = 1} \paren{\sum_j^n |v_j|} \|a_{k}\|_1\\
+                &= \| a_k \|_1\\
+                &= \max_j \| a_j \|_1\\
+                &= \max_j \sum_i |a_{ij}|.
+    \end{align*}
+    Notice that if we let $v = e_k$, we achieve equality  
+    \[
+        \|A\|_1 = \|A e_k\|_1 = \|a_k\|_1 = \max_{j}\sum_i |a_{ij}|.
+    \]
+
+
+    \item [(b)]
+    By definition we have
+    \begin{align*}
+        \| A \|_\infty &= \max_{\|v\|_\infty = 1 }\| Av \|_\infty\\
+        &= \max_{\|v\|_\infty = 1 }\left\| \sum_j^n a_jv_j   \right\|_\infty\\
+        &\leq \max_{\|v\|_\infty = 1}  \left\| \sum_j^n \|v\|_\infty a_j  \right\|_\infty\\
+        &= \left\| \sum_j^n a_j \right\|_\infty\\
+        &= \max_i \sum_j^n |a_{ij}|.
+    \end{align*}
+    Notice that if we define the vector $v$ such that $v_i = \text{Sign}(a_{ij})$, then $a_{ij}v_i = |a_{ij}|$ which means
+    \[
+        \| A \|_\infty = \|Av\|_\infty = \left\| \sum_j^n |a_j| \right\|_\infty = \max_i \sum_j^n|a_{ij}|
+    \] 
+
+
+\end{enumerate}
+
+\end{proof}
+\end{problem}
+
+
+
+
+%---------------%
+%---Problem 3---%
+%---------------%
+
+
+\begin{problem}%[vskip]
+\subsection*{Problem 3}
+
+Consider the matrix
+\[
+    A = \begin{pmatrix}
+        1 & 10\\
+        0 & 1
+    \end{pmatrix}.
+\]
+\begin{enumerate}
+    \item [(a)] Find the Jordan form of $A$.
+    \item [(b)] Find the $2$-norm of $A$.
+\end{enumerate}
+
+\subsection*{Solution}
+\begin{proof}
+
+Consider the matrix
+\[
+    A = \begin{pmatrix}
+        1 & 10\\
+        0 & 1
+    \end{pmatrix}.
+\]
+
+\begin{enumerate}
+    \item [(a)]
+    Thus $\lambda = 1$ with algebraic multiplicity $2$ are the eigenvalues of $A$. Next, let's find eigenspace corresponding to $\lambda = 1$ by solving $Av = \lambda v$, where $v$ is the corresponding eigenvector
+    \begin{align*}
+        \begin{pmatrix}
+            1 - \lambda & 10\\
+            0 & 1 - \lambda
+        \end{pmatrix}\begin{pmatrix}
+            a_1 \\ a_2
+        \end{pmatrix} &= 0\\
+        \begin{pmatrix}
+            0 & 10\\
+            0 & 0
+        \end{pmatrix}\begin{pmatrix}
+            a_1 \\ a_2 
+        \end{pmatrix}   &= 0,      
+    \end{align*}
+    solving the system gives
+    \[
+        \begin{pmatrix}
+            a_1 \\ a_2
+        \end{pmatrix} = \begin{pmatrix}
+            a_1 \\ 0
+        \end{pmatrix},
+    \]
+    and letting $a_1 = 1$ we get the eigenvector $v_1 = (1, 0)^T$. Since $\lambda$ has algebraic multiplicity $2$, we can find the second eigenvector in the corresponding eigenspace using the generalized eigenvector of the form
+    \begin{align*}
+        (A - I\lambda)v_2 = v_1 \implies \begin{pmatrix}
+            0 & 10\\
+            0 & 0
+        \end{pmatrix} \begin{pmatrix}
+            b_1 \\ b_2
+        \end{pmatrix} = \begin{pmatrix}
+            1 \\ 0
+        \end{pmatrix} \implies \begin{pmatrix}
+            10 b_2 \\ 0
+        \end{pmatrix} = \begin{pmatrix}
+            1 \\ 0
+        \end{pmatrix},
+    \end{align*}
+    thus we have that $v_2 = (0, 1/10)^T$. Then to find the Jordan form we compute
+    \[
+        P^{-1}AP = \begin{pmatrix}
+            1 & 0 \\ 0 & 1/10
+        \end{pmatrix}^{-1}\begin{pmatrix}
+            1 & 10\\ 0 & 1
+        \end{pmatrix}\begin{pmatrix}
+            1 & 0 \\ 0 & 1/10
+        \end{pmatrix} = \begin{pmatrix}
+            1 & 1\\ 0 & 1
+        \end{pmatrix} = J.
+    \]
+
+    \item [(b)]
+    Recall that
+    \[
+        \|A\|_2 = \sqrt{\lambda_\text{max}(A^*A)} = \sigma_\text{max}.
+    \]
+    Notice that
+    \[
+        A^* A = \begin{pmatrix}
+            1 & 0\\
+            10 & 1 
+        \end{pmatrix}\begin{pmatrix}
+            1 & 10\\
+            0 & 1
+        \end{pmatrix} = \begin{pmatrix}
+            1 & 10\\
+            10 & 101
+        \end{pmatrix},
+    \]
+    whose characteristic polynomial is
+    \[
+        (1 - \lambda)(101 - \lambda) - 100 = \lambda^2 -100\lambda + 1 = 0.
+    \]
+    Solving using the quadratic formula yields
+    \[
+        \lambda_{1,2} = 51 \pm 10\sqrt{26}.
+    \]
+    Thus 
+    \[
+        \|A\|_2 = \sqrt{51 \pm 10\sqrt{26}} \approx 10.09
+    \]
+
+\end{enumerate}
+
+\end{proof}
+\end{problem}
+
+
+
+
+
+
+\end{document}

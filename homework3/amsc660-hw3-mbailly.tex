@@ -1,0 +1,572 @@
+\documentclass[12pt]{report}
+\usepackage{commands}
+
+\begin{document}
+
+\large
+\begin{center}
+AMSC 660 Homework 3\\
+Due 09/20/23\\
+By Marvyn Bailly\\
+\end{center}
+\normalsize
+\hrule
+
+%Good luck my man
+%---------------%
+%---Problem 1---%
+%---------------%
+
+
+\begin{problem}%[vskip]
+\subsection*{Problem 1}
+
+Let $A$ be an $n \times n$ matrix. The Rayleigh quotient $Q(x)$ is the following function defined on all $x \in \R^n$:
+\[
+     Q(x) := \frac{x^T A x}{x^T x}
+\]
+\begin{enumerate}
+    \item [(a)] Let $A$ be symmetric. Prove that $\nabla Q(x) = 0$ if and only if $x$ is an eigenvector of $A$.
+    \item [(b)] Let $A$ be asymmetric. What are the vectors $x$ at which $\nabla Q(x) = 0$?
+\end{enumerate}
+
+\subsection*{Solution}
+\begin{proof}
+
+Let $A$ be an $n \times n$ matrix. Recall that the Rayleigh quotient $Q(x)$ is the following function defined on all $x \in \R^n$
+\[
+     Q(x) := \frac{x^T A x}{x^T x}.
+\]
+Let's first compute $\nabla Q(x)$. Let $N = x^T A x$ and $D = x^Tx$. Then
+\[
+     \pp{}{x}D = \pp{}{x_k}\paren{\sum_{k=1}^{n}x_k^2} = 2x.
+\]
+To compute $\pp{}{x}N$, observe that $\pp{}{x_1}N$ is given by
+\begin{align*}
+    \pp{}{x_1}(N) &= \pp{}{x_1}\sum_{i=1}^n\sum_{j=1}^n a_{ij}x_jx_i\\
+    &=\pp{}{x_1} \sum_{j=1}^n a_{1j}x_jx_1 + \sum_{i=1}^na_{i1}x_1x_i + \sum_{i=2}^n\sum_{j=2}^n a_{ij}x_jx_i\\
+    &= \sum_{j=1}^n a_{1j}x_j + \sum_{i=1}^na_{i1}x_i.
+\end{align*}
+Extending this yields
+\[
+    \pp{}{x}(N) = \begin{pmatrix}
+        \sum_{j=1}^n a_{1j}x_j + \sum_{i=1}^na_{i1}x_i \\
+        \vdots\\
+        \sum_{j=1}^n a_{nj}x_j + \sum_{i=1}^na_{in}x_i
+    \end{pmatrix} = \begin{pmatrix}
+        \sum_{j=1}^n a_{1j}x_j\\
+        \vdots\\
+        \sum_{j=1}^n a_{nj}x_j
+    \end{pmatrix} + \begin{pmatrix}
+        \sum_{j=1}^n a_{i1}x_j\\
+        \vdots\\
+        \sum_{j=1}^n a_{in}x_j
+    \end{pmatrix} = \paren{A + A^T}x.
+\]
+Then we can compute 
+\[
+     \nabla Q(x) = \frac{N'D - D'N}{D^2}.
+\]
+
+
+
+\begin{enumerate}
+    \item [(a)]
+    Assume that $A$ is symmetric. Notice that
+    \[
+         \pp{}{x}(N) = (A + A^T)x = 2Ax.
+    \]
+    Now we can compute 
+    \begin{align*}
+        \nabla Q(x) &= \frac{N'D - D'N}{D^2}\\
+        &= \frac{2Axx^Tx - 2x x^TAx}{(x^Tx)^2}\\
+        &= \frac{2}{\|x\|_2^4}\paren{Axx^Tx - xx^TAx}.
+    \end{align*}
+    We want to show that $\nabla Q(x) = 0$ if and only if $x$ is an eigenvector of $A$. It suffices to show that
+    \[
+        Axx^Tx = xx^TAx  \iff Ax = \lambda x,
+    \]
+    where $\lambda$ is the corresponding eigenvalue of $x$. Notice that $x^Tx$ and $x^TAx$ are scalars and by the Rayleigh Quotient, we are considering $x \in \R^n$ such that $x^Tx,\neq 0$. Thus we can rearrange terms to get
+    \[
+        Ax(x^Tx) = (x^TAx)x \iff Ax = \frac{x^TAx}{x^Tx}x \iff Ax=\lambda x,
+    \] 
+    where $\lambda = \frac{x^TAx}{x^Tx}$. Therefore $\nabla Q(x) = 0$ if and only if $x$ is an eigenvector of $A$.
+
+    
+    \item [(b)]
+    Assume that $A$ is asymmetric. Observe that 
+    \begin{align*}
+        \nabla Q(x) = \frac{N'D - D'N}{D^2} = \frac{(A + A^T)x x^Tx - 2x x^TAx}{(x^Tx)^2}.
+    \end{align*}    
+    We want to find the vectors $x$ such that $\nabla Q(x) =0$. Thus let's find the vectors that satisfy
+    \[
+        (A + A^T)x x^Tx = 2x x^TAx \iff \frac{(A + A^T)}{2} x = \frac{x^T A x}{x^T x} x,
+    \]
+    notice that $\frac{A + A^T}{2} = B$ is the symmetric decomposition of $A$. Now if we let $\lambda = \frac{x^T A x}{x^T x}$, we have
+    \[
+         Bx = \lambda x,
+    \]
+    and thus $\nabla Q(x) = 0$ is achieved if there exists an eigenvector $x$ of $\frac{A +A^T}{2}$ that has a corresponding eigenvalue such that $\lambda = \frac{x^T A x}{x^T x}$. 
+    
+
+\end{enumerate}
+
+
+\end{proof}
+\end{problem}
+
+
+
+
+%---------------%
+%---Problem 2---%
+%---------------%
+
+
+\begin{problem}%[vskip]
+\subsection*{Problem 2}
+
+The goal of this exercise is to understand how one can compute a QR decomposition using \textit{Householder reflections}.
+\begin{enumerate}
+    \item[(a)] Let $u$ be a unit vector in $\R^n$, i.e. $\|u\|_2 =1$. Let $P = I - 2uu^T.$ This matrix performs reflections with respect to the hyperplane orthogonal to the vector $u$. Show that $P = P^T$ and $P^2 = I$.
+    
+    
+    \item[(b)] Let $x \in \R^n$ be any vector, $x = [x_1,\dots,x_n]^T$. Let $u$ be defined as follows:
+    \[
+         \tilde{u} := \begin{pmatrix}
+            x_1 - \text{sign}(x_1)\|x\|_2\\x_2\\\vdots\\x_n
+         \end{pmatrix} \equiv x - \text{sign}(x_1)\|x\|_2e_1,~~u=\frac{\tilde{u}}{\|\tilde{u}\|_2},
+    \]
+    where $e_1 = [1,0,\dots,0]^T$. The matrix with the vector $u$ construct according to (1) will be denoted \verb+House(x)+:
+    \[
+         P = I - 2uu^T \equiv I - 2 \frac{\tilde{u}\tilde{u}^T}{\tilde{u}^T\tilde{u}}\equiv \text{House(x)}.
+    \]
+    Calculate $Px$.
+    
+    
+    \item[(c)] Let $A$ be an $m \times n$ matrix, $m\geq n$, with columns $a_j$, $j=1,\dots,n$. Let $A_0 = A$. Let $P_1 = \text{House}(a_1).$ Then $A_1 := P_1A_0$ has the first column with the first entry nonzero and the other entries being zero. Next, we define $P_2$ as
+    \[
+         P_2 = \begin{pmatrix}
+            1&0\\0&\tilde{P_2}
+         \end{pmatrix},
+    \]
+    where the matrix $\tilde{P_2} = \text{House}((A_1)(2:n,2))$. The notation $A_1(2:n,2)$ is Matlab's syntax indicating this is the vector formed by entries $2$ through $n$ of the 2nd column on $A_!$. Then we set $A_2 = P_2 A_1$. And so on. This algorithm can be described as follow. Let $A_0 = A$. Then for $j = 1,2,\dots,n$ we set
+    \[
+         P_j = \begin{pmatrix}
+            I_{(j-1)\times(j-1)} & 0\\ 0 & \tilde{P_j}
+         \end{pmatrix};~~~ \tilde{P_j} = \text{House}(A_{j-1}(j:n,j)), ~~ A_j = P_jA_{j-1}.
+    \]
+    Check that the resulting matrix $A_n$ is upper triangular, its entries $(A)_{ij}$ are all zeros for $i > j$. Propose an \verb+if+-statement in this algorithm that will guarantee that $A_n$ has positive entries $(A_n)_{jj}, 1 \leq j \leq n$.
+    
+
+    \item[(d)] Extract the QR decomposition of $A$ given the matrices $P_j, 1 \leq j \leq n$, and $A_n$. 
+    
+\end{enumerate}
+
+\subsection*{Solution}
+\begin{proof}
+
+\begin{enumerate}
+    \item [(a)]
+    Let $u$ be a unit vector in $\R^n$. Let $P = I - 2uu^T$. Notice that
+    \[
+         P^T = (I - 2uu^T)^T = I - 2uu^T = P, 
+    \]
+    and
+    \[
+         P^2 = (I - 2uu^T)^2 = I^2 - 2uu^T - 2uu^T + 4uu^Tuu^T = I - 4uu^T + 4uu^T = I, 
+    \]
+    where $u^Tu =I$ since $u$ is a unit vector and thus $u^T$ and $u$ are orthogonal. 
+
+
+
+    \item [(b)]
+    Let $x \in \R^n$ be any vector, $x = [x_1,\dots,x_n]^T$. Let $u$ be defined as follows:
+    \[
+         \tilde{u} := \begin{pmatrix}
+            x_1 - \text{sign}(x_1)\|x\|_2\\x_2\\\vdots\\x_n
+         \end{pmatrix} \equiv x - \text{sign}(x_1)\|x\|_2e_1,~~u=\frac{\tilde{u}}{\|\tilde{u}\|_2},
+    \]
+    where $e_1 = [1,0,\dots,0]^T$. The matrix with the vector $u$ construct according to (1) will be denoted \verb+House(x)+:
+    \[
+         P = I - 2uu^T \equiv I - 2 \frac{\tilde{u}\tilde{u}^T}{\tilde{u}^T\tilde{u}}\equiv \text{House(x)}.
+    \]
+    Notice that
+    \begin{align*}
+          Px &= (I - 2uu^T)\\
+          &= Ix - 2uu^Tx\\
+          &= x - \frac{2\tilde{u}\tilde{u}^Tx}{\tilde{u}^T\tilde{u}}\\
+          &= x - \frac{2(x - \text{sign}(x_1) \|x\|_2 e_1)(x^T - \text{sign}(x_1) \|x\|_2 e_1^T)x}{(x^T - \text{sign}(x_1)\|x\|_2e_1^T)(x - \text{sign}(x_1)\|x\|_2e_1)}\\
+          &= x - \frac{2(x - \text{sign}(x_1) \|x\|_2 e_1)(x^Tx - \text{sign}(x_1)\|x\|_2e_1^Tx)}{x^Tx - \text{sign}(x_1)\|x\|_2x^Te_1 - \text{sign}(x_1)\|x\|_2e_1^Tx + \text{sign}(x)\text{sign}(x)\|x\|^2e_1^Te_1}\\
+          &= x - \frac{2(x - \text{sign}(x_1) \|x\|_2 e_1)(x^Tx - \text{sign}(x_1)\|x\|_2e_1^Tx)}{2\paren{x^Tx - \text{sign}(x_1)\|x\|_2x^Te_1}}\\
+          &=x - (x - \text{sign}(x_1)\|x\|_2e_1)\\
+          &= \text{sign}(x_1)\|x\|_2e_1,
+    \end{align*}
+    where we used $\text{sign}(x)\text{sign}(x)\|x\|^2e_1^Te_1 = \|x\|^2 = x^Tx$ and $x^Te_1 = e_1^Tx$. Notice that $Px$ is a column vector with a nonzero entree in the first position and zeros everywhere else.
+
+
+    \item [(c)] 
+    Let $A$ be an $m \times n$ matrix, $m\geq n$, with columns $a_j$, $j=1,\dots,n$. Let $A_0 = A$. Let $P_1 = \text{House}(a_1).$ Then $A_1 := P_1A_0$ which gives
+    \[
+      A_1 = P_1A_0 = \begin{pmatrix}
+          \text{sign}(a_{11})\|a_1\|_2e_1 \Big| \tilde{a_2} \Big| \cdots \Big| \tilde{a_n}
+      \end{pmatrix},
+    \]
+    which has the first column with the first entry nonzero and the other entries being zero. This directly follows from our observation in (b). Let $P_1a_j = \tilde{a_j}$ for $j>1$. Next, we define $P_2$ as
+    \[
+         P_2 = \begin{pmatrix}
+            1&0\\0&\tilde{P_2}
+         \end{pmatrix},
+    \]
+    where the matrix $\tilde{P_2} = \text{House}(A_1(2:n,2))$. The notation $A_1(2:n,2)$ is Matlab's syntax indicating this is the vector formed by entries $2$ through $n$ of the 2nd column on $A_1$. Then we set $A_2 = P_2 A_1$. Notice that $P_2a_1 = P_2(\text{sign}(a_{11})\|a_1\|_2e_1) = \tilde{a_1}e_1$ and still has zeros below the first entree. Furthermore, $P_2\tilde{a_2} = \tilde{a}_{21}e_1 + \text{sign}(\tilde{a}_{22})\|\tilde{a_{2}}\|e_2$ and therefore the second column of $A_2$ has nonzero entries on and above the diagonal with zeros everywhere else. And so on each step, the updated $A_j = P_jA_{j-1}$ will zero the entrees below the diagonal of the $j$th column. Therefore the resulting $A_n$ matrix will be upper triangular. To guarantee that the elements along the main diagonal are positive, we can impose the following \verb+if+-statement: $\text{if}(\text{sign}(a_{ii}) < 0), \text{then set} \tilde{P_j} = - \tilde{P_j}$ which will force the elements along the main diagonal to be positive.
+
+
+
+    \item [(d)]
+    From the algorithm described above, we have 
+    \[
+      A_n = P_nA_{n-1} = P_nP_{n-1}\cdots P_2 P_1 A = PA,
+    \]
+    where $A_n$ is upper triangular. Notice that by the construction of $P_j$, it is orthogonal and symmetric and thus so is $P$. Now letting $Q^T = P_n\cdots P_1$ then $Q = P_1^T \cdots P_n^T = P_1 \cdots P_n$. And letting $A_n = R$ we have
+    \[
+      A = QR,
+    \]
+    where $Q$ is orthogonal and $R$ is upper triangular.
+\end{enumerate}
+
+\end{proof}
+\end{problem}
+
+
+
+
+%---------------%
+%---Problem 3---%
+%---------------%
+
+
+\begin{problem}%[vskip]
+\subsection*{Problem 3}
+
+Prove items (1)-(6) of the following Theorem:
+
+Let $A = U\Sigma V^T$ be the SVD of the $m \times n$ matrix $A, m \geq n$.
+\begin{enumerate}
+    \item Suppose $A$ is symmetric and $A = U \Lambda U^T$ be an eigendecomposition of $A$. Then the SVD of $A$ is $U\Sigma V^T$ where $\sigma_i = |\lambda_i|$ and $v_i = u_i \text{sign}(\lambda_i)$, where $\text{sign}(0) = 1$.
+    \item The eigenvalues of the symmetric matrix $A^TA$ are $\sigma^2$. The right singular vectors $v_i$ are the corresponding orthonormal eigenvectors.
+    \item The eigenvalues of the symmetric matrix $AA^T$ are $\sigma_i^2$ and $m-n$ zeros. The left singular vectors $u_i$ are the corresponding orthonormal eigenvectors for the eigenvalues $\sigma_i^2$. One can take any $m - n$ orthogonal vectors as eigenvectors for the eigenvalue $0$.
+    \item If $A$ has full rank, the solution of
+    \[
+         \min_{x}\|Ax-b\| ~~ \text{is}~~ x = V\Sigma^{-1}U^Tb.
+    \]
+    \item If $A$ is square and nonsingular, then
+    \[
+         \|A^{-1}\|_2 = \frac{1}{\sigma_n}.
+    \]
+    \item Suppose
+    \[
+        \sigma_1 \geq \cdots \geq \sigma_r > \sigma_{r+1} = \cdots = \sigma_n = 0.
+    \]
+    Then
+    \[
+         \text{rank}(A) = r,
+    \]
+    and
+    \[
+         \text{null}(A) = \{ x \in \R^n : Ax = 0 \in \R^m\} = \text{span}(v_{r+1},\dots,v_n), ~~ \text{range}(A) = \text{span}(u_1,\dots,u_r).
+    \]
+    
+
+\end{enumerate}
+
+
+\subsection*{Solution}
+\begin{proof}
+Let $A = U \Sigma V^T$ be the SVD of the $m\times n$ matrix $A$, $m\geq n$. 
+\begin{enumerate}
+     \item 
+     Suppose $A$ is symmetric and $A = U\Lambda U^T$ is the eigendecomposition of $A$ where the columns of $U$ are $u_j$. Let $\sigma_i = |\lambda_i|$, $\Sigma = \text{diag}(\sigma_i)$, and $V$ be a matrix with columns $v_i = u_i \text{sign}(\lambda_i)$. Observe that
+     \begin{align*}
+          U \Sigma V^T &= U \begin{pmatrix}
+               |\lambda_1|\\
+               &\ddots\\
+               &&|\lambda_n|
+          \end{pmatrix}\begin{pmatrix}
+               u_1 \text{sign}(\lambda_1)\\
+               \vdots\\
+               u_n \text{sign}(\lambda_1)
+          \end{pmatrix}\\
+          &= U \begin{pmatrix}
+               |\lambda_1|\text{sign}(\lambda_1)\\
+               &\ddots\\
+               &&|\lambda_n|\text{sign}(\lambda_1)
+          \end{pmatrix}\begin{pmatrix}
+               u_1 \\
+               \vdots\\
+               u_n 
+          \end{pmatrix}\\
+          &= U \begin{pmatrix}
+               \lambda_1\\
+               &\ddots\\
+               &&\lambda_n
+          \end{pmatrix}U^T\\
+          &= U \Lambda U^T.
+     \end{align*}
+     Since $U$ is constructed from the eigenvectors of $A$, $U$ and $V$ are orthogonal. By construction $\Sigma$ is diagonal. Thus the SVD of $A$ is $U\Sigma V^T$ where $\sigma_i = |\lambda_i|$ and $v_i = u_i \text{sign}(\lambda_i)$.
+     
+     \item
+     Consider that $A^TA$ is symmetric and thus has an eigendecomposition of the form $A^TA = Q\Lambda Q^T$. By (1), the SVD of $A^TA$ is $Q\Sigma V^T$ where $\sigma_i = |\lambda_i|$ and $v_i = q_i \text{sign}(\lambda_i)$. Notice that the SVD of $A^TA$ is also given by
+     \begin{align*}
+          A^TA &= \paren{U\Sigma V^T}^T\paren{U \Sigma V^T}\\
+               &= V\Sigma U^T U \Sigma V^T\\
+               &= V \Sigma^2 V^T\\
+               &= V \begin{pmatrix}
+                    \sigma_1^2\\
+                    &\ddots\\
+                    &&\sigma_n^2
+               \end{pmatrix} V^T,
+     \end{align*}
+     where $U^TU = I$ as $U$ is orthogonal. So $A=Q\Lambda Q = V\Sigma V^T$. Thus the eigenvalues of $A^TA$ are $\sigma_i^2$ as $\Sigma = \Lambda$ and the right singular vectors $v_i$ are the corresponding orthonormal eigenvectors as $Q=V$. Note, that since $A^TA$ is symmetric, the eigenvectors of $A^TA$ form an orthogonal basis which can be scaled to be orthonormal. 
+
+
+     \item
+     Consider that the $AA^T$ is a symmetric $m\times m$ matrix and has an eigendecomposition of the form $AA^T = Q\Lambda Q^T$ where $Q$ and $\Lambda$ are $m \times m$ matrices. By (1), the SVD of $AA^T$ is $Q\Sigma V^T$ where $\sigma_i = |\lambda_i|$ and $v_i = q_i \text{sign}(\lambda_i)$. Notice that the SVD of $AA^T$ is also given by
+     \begin{align*}
+          AA^T &= \paren{U\Sigma V^T}\paren{U \Sigma V^T}^T\\
+               &= U\Sigma V^T V \Sigma U^T\\
+               &= U \Sigma^2 U^T\\
+               &= U \begin{pmatrix}
+                    \sigma_1^2\\
+                    &\ddots\\
+                    &&\sigma_n^2
+               \end{pmatrix} U^T,
+     \end{align*}
+     where $V^TV = I$ as $V$ is orthogonal, $U$ is $m \times n$ and $\Sigma$ is $n \times n$. To make the dimensions of the two forms of the SVD match, we can extend $\Sigma$ by $m-n$ rows and columns of zeros and add $m-n$ columns of orthogonal vectors $\{\tilde{u_{m-n}},\dots, \tilde{u_m}\}$ (orthogonal to each other and to the columns of $U$) to get
+     \[
+           AA^T = [u_1 \Big| \cdots \Big| u_n \Big| \tilde{u}_{m-n} \Big| \cdots \Big| \tilde{u}_m]\begin{pmatrix}
+               \sigma_1^2\\
+               &\ddots\\
+               &&\sigma_n^2\\
+               &&&0\\
+               &&&&\ddots\\
+               &&&&&0
+           \end{pmatrix}[u_1 \Big| \cdots \Big| u_n \Big| \tilde{u}_{m-n} \Big| \cdots \Big| \tilde{u}_m]^T = \tilde{U}\tilde{\Sigma}\tilde{U}^T.
+     \]
+     Now that the dimensions match, we have that $AA^T = Q\Lambda Q^T = \tilde{U}\tilde{\Sigma}\tilde{U}^T$. Thus the eigenvalues of the symmetric matrix $AA^T$ are $\sigma_i^2$ and $m-n$ zeros as $\Lambda = \tilde{\Sigma}$. The left singular vectors $u_i$ are the corresponding orthonormal eigenvectors for the eigenvalues $\sigma_i^2$ and one can take any $m - n$ orthogonal vectors as eigenvectors for the eigenvalue $0$ as $Q = \tilde{U}$. Note, that since $AA^T$ is symmetric, the eigenvectors of $A^TA$ form an orthogonal basis which can be scaled to be orthonormal. 
+
+     \item 
+     Assume that $A$ has full rank. Recall that the minimizer of the least squares problem
+     \[
+           \min_x \|Ax - b\|,
+     \]
+     is given by the normal equation $A^TA x^* = A^Tb$ as $A$ is full rank. Plugging in the SVD form of $A$ yields 
+     \begin{align*}
+          A^TA x^* &= A^Tb\\
+          V\Sigma^2 V^T x^* &= V\Sigma U^T b\\
+          \Sigma^2 V^T x^* &= \Sigma U^T b\\
+          V^T x^* &= \Sigma^{-1}U^T b\\
+          x^* &= V \Sigma^{-1}U^Tb.
+     \end{align*}
+     Therefore, the solution of
+    \[
+         \min_{x}\|Ax-b\| ~~ \text{is}~~ x = V\Sigma^{-1}U^Tb.
+    \]
+
+     \item
+     Assume $A$ is square and nonsingular. Recall that 
+     \[
+           \| A \|_2 = \max_i\sigma_i = \sigma_1.
+     \]
+     Observe that
+     \[
+           A^{-1} = (U\Sigma V^T)^{-1} = U^{-1}\Sigma^{-1}V^{-T} = U^{-1} \begin{pmatrix}
+               \frac{1}{\sigma_1}\\
+               &\ddots\\
+               &&\frac{1}{\sigma_n}
+           \end{pmatrix}V^{-T},
+     \]
+     and thus
+     \[
+           \| A^{_1} \| = \max_i \sigma_i = \frac{1}{\sigma_n}.
+     \]
+     
+     
+     \item
+     Suppose
+     \[
+           \sigma_1 \geq \cdots \geq \sigma_r > \sigma_{r+1} = \cdots = \sigma_n = 0.
+     \]
+     Recall the geometric definition of an SVD. That is $Av_i = \sigma_i u_i$, i.e. $A$ transforms the basis $\{v_i\}$ to the basis $\{u_i\}$ with scaling of each $v_i$ given by $\sigma_i$. Since $\sigma_{r+1} = \cdots = \sigma_n = 0$, $Av_i = 0$ for $i = r+1, \dots, n$. Thus $\text{null}(A) = \text{span}(v_{r+1},\dots,v_n)$. Furthermore, for $i = 1, \dots, r$, $Av_i = \sigma_i u_i$ which gives $\text{range}(A) = \text{span}(u_1,\dots,u_r)$. By the rank-nullity theorem, we have that $\text{rank}(A) = \text{dim}(A) - \text{nullity}(A)$ which tells $\text{rank}(A) = n - (n-r) = r$.         
+
+
+\end{enumerate}
+\end{proof}
+\end{problem}
+
+
+
+
+%---------------%
+%---Problem 4---%
+%---------------%
+
+
+\begin{problem}%[vskip]
+\subsection*{Problem 4}
+
+Let $A$ be an $m \times n$ matrix where $m < n$ and rows of $A$ are linearly independent. Then the system of linear equations $Ax = b$ is underdetermined, i.e., inﬁnitely many solutions. Among them, we want to ﬁnd the one that has the minimum $2$-norm. Check that the minimum $2$-norm solution is given by
+\[
+     x^* = A^T(AA^T)^{-1}b.
+\]
+\textit{Hint. One way to solve this problem is the following. Check that $x^*$ is a solution to $Ax = b$. Show that is $x^* + y$ is also a solution of $Ax = b$ then $Ay = 0$. Then check that the $2$-norm of $x^* + y$ is minimal if $y = 0.$}
+\subsection*{Solution}
+\begin{proof}
+
+Let $A$ be an $m\times n$ matrix where $m < n$ and rows of $A$ are linearly independent. Then the system of linear equations $Ax = b$ is underdetermined. Among them, we want to ﬁnd the one that has the minimum $2$-norm. Consider
+\[
+      x^* = A^T*(AA^T)^{-1}b.
+\]
+
+First, notice that $x^*$ is a solution of $Ax = b$ as 
+\[
+      Ax^* = AA^T(AA^T)^{-1}b = b,
+\]
+since $A$ is orthogonal by construction. Next observe that $x^* + y$ is also a solution if $Ay = 0$ as
+\[
+      A(x^* + y) = AA^T(AA^T)^{-1}b + Ay = b + Ay.
+\]
+Finally, notice that $x^* + y$ is minimal if $y = 0$ as
+\begin{align*}
+     \min_y \|x^* + y\|_2^2 &= < x^* + y, x^* + y>\\
+     &= <x^*,x> + 2<x^*,y> + <y,y>\\
+     &= \|x^*\|_2^2 + \|y\|_2^2 + 2<A^T(AA^T)^{-1}b,y>\\
+     &= \|x^*\|_2^2 + \|y\|_2^2 + 2b^T(AA^T)^{-1}Ay\\
+     &= \|x^*\|_2^2 + \|y\|_2^2,
+\end{align*} 
+as $Ay = 0$. Therefore the minimum $2-norm$ solution is given by
+\[
+      x^* = A^T(AA^T)^{-1}b.
+\]
+
+
+\end{proof}
+\end{problem}
+
+
+
+
+%---------------%
+%---Problem 5---%
+%---------------%
+
+
+\begin{problem}%[vskip]
+\subsection*{Problem 5}
+
+Let $A$ be a $3\times3$ matrix, and let $T$ be its Schur form, i.e., there is a Hermitian matrix $Q$ (i.e. $Q^*Q = QQ^* = I$ where $Q^*$ denotes the transpose and complex conjugate of $Q$) such that
+\[
+     A = QTQ^*, ~~\text{where}~~ T = \begin{pmatrix}
+        \lambda_1 & t_{12} & t_{13}\\ 0 & \lambda_2 & t_{23}\\ 0 & 0 & \lambda_3
+     \end{pmatrix}.
+\]
+Assume that $\lambda_j$, $j=1,2,3$ are all distinct.
+\begin{enumerate}
+    \item [(a)] Show that if $v$ is an eigenvector of $T$ then $Qv$ is the eigenvector of $A$ corresponding to the same eigenvalue.
+    \item [(b)] Find eigenvectors of $T$. \textit{Hint: Check that $v_1 = [1,0,0]^T$. Look for $v_2$ of the form $v_2 = [a,1,0]^T$, and then for $v_3$ of the form $v_3 = [b,c,1]^T$, where $a,b,c$ are to be expressed via entries of matrix $T$.}
+    \item [(c)] Write out eigenvectors of $A$ in terms of the found eigenvectors of $T$ and the columns of $Q$: $Q = [q_1,q_2,q_3]$. 
+\end{enumerate}
+
+\subsection*{Solution}
+\begin{proof}
+Let $A$ be a $3\times3$ matrix, and let $T$ be its Schur form, i.e., there is a Hermitian matrix $Q$ (i.e. $Q^*Q = QQ^* = I$ where $Q^*$ denotes the transpose and complex conjugate of $Q$) such that
+\[
+     A = QTQ^*, ~~\text{where}~~ T = \begin{pmatrix}
+          \lambda_1 & t_{12} & t_{13}\\ 0 & \lambda_2 & t_{23}\\ 0 & 0 & \lambda_3
+     \end{pmatrix}.
+\]
+Assume that $\lambda_j$, $j=1,2,3$ are all distinct.
+\begin{enumerate}
+     \item [(a)]
+     Assume that $v$ is an eigenvector of $T$ corresponding to the eigenvalue $\lambda$, i.e. $Tv = \lambda v$. Observe
+     \[
+           AQv = QTQ^*Qv = QTv = \lambda QV.
+     \]
+     Thus $Qv$ is an eigenvector of $A$ corresponding to the same eigenvalue.
+
+
+     \item [(b)]
+     We wish to find the eigenvectors of $T$. Let's look for $v_1$ of the form $v_1 = [1,0,0]^T$ with the corresponding eigenvalue of $\lambda$. Observe that
+     \[
+          \begin{pmatrix}
+               \lambda_1 & t_{12} & t_{13}\\ 0 & \lambda_2 & t_{23}\\ 0 & 0 & \lambda_3
+          \end{pmatrix}\begin{pmatrix}
+               1 \\ 0 \\ 0
+          \end{pmatrix} = \lambda \begin{pmatrix}
+               1 \\ 0 \\ 0
+          \end{pmatrix} \iff \begin{pmatrix}
+               \lambda_1 \\ 0 \\0 
+          \end{pmatrix}  = \begin{pmatrix}
+               \lambda \\ 0 \\ 0
+          \end{pmatrix}.
+     \]
+     So $Tv_1 = \lambda_1 v_1$ is indeed an eigenvector of $T$. Next, let's look for $v_2$ of the form $v_2 = [a,1,0]^T$ with the corresponding eigenvalue of $\lambda$. Observe that
+     \[
+          \begin{pmatrix}
+               \lambda_1 & t_{12} & t_{13}\\ 0 & \lambda_2 & t_{23}\\ 0 & 0 & \lambda_3
+          \end{pmatrix}\begin{pmatrix}
+               a \\ 1 \\ 0
+          \end{pmatrix} = \lambda \begin{pmatrix}
+               a \\ 1 \\ 0
+          \end{pmatrix} \iff \begin{pmatrix}
+               \lambda_1 a + t_{12} \\ \lambda_2 \\0 
+          \end{pmatrix}  = \begin{pmatrix}
+               \lambda a \\ \lambda \\ 0
+          \end{pmatrix}.
+     \]
+     Solving the system of equations gives $\lambda = \lambda_2$ and $a = \frac{t_{12}}{\lambda_2 - \lambda_1}$. Thus $Tv_2 = \lambda_2 v_2$ where 
+     \[
+           v_2 = \left[\frac{t_{12}}{\lambda_2 - \lambda_1},1,0\right]^T.
+     \]
+     Next, let's look for $v_3$ of the form $v_3 = [b,c,1]^T$ with the corresponding eigenvalue of $\lambda$. Observe that
+     \[
+          \begin{pmatrix}
+               \lambda_1 & t_{12} & t_{13}\\ 0 & \lambda_2 & t_{23}\\ 0 & 0 & \lambda_3
+          \end{pmatrix}\begin{pmatrix}
+               b \\ c \\ 1
+          \end{pmatrix} = \lambda \begin{pmatrix}
+               b \\ c \\ 1
+          \end{pmatrix} \iff \begin{pmatrix}
+               \lambda_1 b + t_{12}c + t_{13} \\ \lambda_2 c + t_{23}\\
+               \lambda_3
+          \end{pmatrix}  = \begin{pmatrix}
+               \lambda b \\ \lambda c\\ \lambda
+          \end{pmatrix}.
+     \]
+     Solving the system of equations gives $\lambda = \lambda_3, c = \frac{t_{23}}{\lambda_3 - \lambda_2}, \and b = \frac{t_{12}c + t_{13}}{\lambda_3 - \lambda_1} = \frac{\frac{t_{12}t_{23}}{\lambda_3 - \lambda_2} + t_{13}}{\lambda_3 - \lambda_1}$. Thus $Tv_3 = \lambda_3 v_3$ where 
+     \[
+           v_3 = \left[\frac{\frac{t_{12}t_{23}}{\lambda_3 - \lambda_2} + t_{13}}{\lambda_3 - \lambda_1}, \frac{t_{23}}{\lambda_3 - \lambda_2}, 1\right]^T.
+     \]
+     
+
+
+     \item [(c)] 
+     Next, we wish to find the eigenvectors of $A$ in terms of the eigenvectors of $T$ and the columns of $Q = [q_1, q_2, q_3]$. From (a) we know that if $v$ is an eigenvector of $T$ then $Qv$ is the eigenvector of $A$ corresponding to the same eigenvalue. Thus let's compute
+     \begin{align*}
+          Qv_1 &= q_1,\\
+          Qv_2 &= aq_1 + q_2 = \frac{t_{12}}{\lambda_2 - \lambda_1}q_1 + q_2,\\
+          Qv_3 &= bq_1 + cq_2 + q_3 = \frac{\frac{t_{12}t_{23}}{\lambda_3 - \lambda_2} + t_{13}}{\lambda_3 - \lambda_1}q_1 + \frac{t_{23}}{\lambda_3 - \lambda_2} q_2 + q_3.
+     \end{align*}
+     where $Qv_i$ correspond to $\lambda_i$. 
+
+
+\end{enumerate}
+
+\end{proof}
+\end{problem}
+
+
+
+
+
+
+\end{document}
